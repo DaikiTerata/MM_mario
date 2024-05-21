@@ -562,8 +562,10 @@ class Config:
         config_file = pd.ExcelFile(config_file_name, engine='openpyxl')
         # 設定ファイルのシート名読み込み（返却値はList型）
         config_sheet_name: List = config_file.sheet_names
-        # サブシート名をリストに格納
-        sub_sheet_name_list: List = []
+        # サブシート名リスト初期化
+        sub_sheet_list: List = []
+        # リストシート名リスト初期化
+        list_sheet_list: List = []
         # 設定ファイルのシート名リストから、各シート名を繰り返し取り出す
         for sheet_name in config_sheet_name:
             # シート名が「MAIN」である場合
@@ -573,11 +575,11 @@ class Config:
             # シート名に「SUB」が含まれる場合
             elif 'SUB' in sheet_name:
                 # サブシート名リストに格納
-                sub_sheet_name_list.append(sheet_name)
+                sub_sheet_list.append(sheet_name)
             # シート名に「LIST001」がある場合
-            elif 'LIST001' in sheet_name:
+            elif 'LIST' in sheet_name:
                 # 接続設定情報シート名設定
-                connect_sheet_name: str = sheet_name
+                list_sheet_list.append(sheet_name)
             # シート名に「DEFALUT_OPTION」がある場合
             elif 'DEFAULT_OPTION' in sheet_name:
                 # 初期設定情報シート名設定
@@ -585,9 +587,9 @@ class Config:
         # 読み込んだ設定ファイルとメインシート名を引数に、メイン設定情報ロードを呼び出す
         self.__mainConfigs: List[ScenarioConfig] = Config.__load_main_process_info(config_file, main_sheet_name)
         # 読み込んだ設定ファイルとサブシート名リストを引数に、サブ設定情報ロードを呼び出す
-        self.__subConfigs: List[ScenarioConfig] = Config.__load_sub_process_info(config_file, sub_sheet_name_list)
+        self.__subConfigs: List[ScenarioConfig] = Config.__load_sub_process_info(config_file, sub_sheet_list)
         # 読み込んだ設定ファイルと接続設定情報シート名を引数に、接続設定情報ロードを呼び出す
-        self.__connectConfigs: List[ConnectConfig] = Config.__load_connect_info(config_file, connect_sheet_name)
+        self.__connectConfigs: List[ConnectConfig] = Config.__load_connect_info(config_file, list_sheet_list)
         # 読み込んだ設定ファイルと初期設定情報シート名を引数に、初期設定情報ロードを呼び出す
         self.__defaultConfigs: Dict[str, DefaultConfig] = Config.__load_default_info(config_file, default_sheet_name)
 
@@ -619,6 +621,7 @@ class Config:
         """接続設定情報プロパティ
 
         インスタンス属性の接続設定情報を取得する
+        接続設定情報シートがある限り、読み込む
 
         Returns:
             List[ConnectConfig]: 接続設定情報
@@ -673,7 +676,7 @@ class Config:
         return mainConfigs
 
 
-    def __load_sub_process_info(config_file: pd.DataFrame, sub_sheet_name_list: List) -> List[ScenarioConfig]:
+    def __load_sub_process_info(config_file: pd.DataFrame, sub_sheet_list: List) -> List[ScenarioConfig]:
         """サブ設定情報ロード
 
         シナリオ設定情報ファイルの「SUB」シートから情報を読み込み、サブ設定情報として返却する
@@ -690,7 +693,7 @@ class Config:
         # コマンド設定情報辞書を初期化する
         commandConfigs: List[CommandConfig] = []
         # 引渡されたサブシート名リストに格納されているサブシート名を順に呼び出す
-        for sub_sheet_name in sub_sheet_name_list:
+        for sub_sheet_name in sub_sheet_list:
             # リストに格納されている順に取得したサブシート名のシナリオ設定ファイルを取得
             sub_collect_sheet = config_file.parse(sub_sheet_name)
             # SUBシートの行でループする
@@ -711,10 +714,11 @@ class Config:
         return subConfigs
 
 
-    def __load_connect_info(config_file: pd.ExcelFile, connect_sheet_name: str) -> List[ConnectConfig]:
+    def __load_connect_info(config_file: pd.ExcelFile, list_sheet_list: List) -> List[ConnectConfig]:
         """接続設定情報ロード
 
-        シナリオ設定情報ファイルの「LIST001」シートから情報を読み込み、接続設定情報として返却する
+        シナリオ設定情報ファイルの「LIST」シートから情報を読み込み、接続設定情報として返却する
+        「LIST」シートがある限り、設定情報を読み込む
 
         Args:
             config_file (pd.ExcelFile): シナリオ設定情報ファイル（pandasでExcelファイルを表すオブジェクト）
@@ -722,18 +726,19 @@ class Config:
         Returns:
             List[ConnectConfig]: 接続設定情報
         """
-        # シナリオ設定情報ファイルから「LIST001」シートの情報を読み込む
-        connect_sheet = config_file.parse(connect_sheet_name)
         # 接続設定情報リストを初期化する
         connectConfigs: List[ConnectConfig] = []
-        # LIST001シートの行でループする
-        for row in [AsciiFilter(row) for _, row in connect_sheet.iterrows()]:
-            # LIST001シートの行のコマンド実行ホスト名"HOST"がnullでない場合
-            if not pd.isnull(row.HOST):
-                # LISTシートの行の情報から接続設定情報を生成し、接続設定情報リストに追加する
-                connectConfigs.append(ConnectConfig(row.HOST, row.DN, row.DS, row.IP, row.VER,row.REGION, row.DEL_FLG, row.USER, row.PASSWD, row.KEY))
+        # 引渡されたリストシート名リストに格納されているリストシート名を順に呼び出す
+        for list_sheet_name in list_sheet_list:
+            # リストに格納されている順に取得したリスト名のシナリオ取得
+            list_collect_sheet = config_file.parse(list_sheet_name)
+            # LISTシートの行でループする
+            for row in [AsciiFilter(row) for _, row in list_collect_sheet.iterrows()]:
+                # LISTシートの行のコマンド実行ホスト名"HOST"がnullでない場合
+                if not pd.isnull(row.HOST):
+                    # LISTシートの行の情報から接続設定情報を生成し、接続設定情報リストに追加する
+                    connectConfigs.append(ConnectConfig(row.HOST, row.DN, row.DS, row.IP, row.VER,row.REGION, row.DEL_FLG))
         return connectConfigs
-
 
     def __load_default_info(config_file: pd.ExcelFile, default_sheet_name: str) -> Dict[str, DefaultConfig]:
         """初期設定情報ロード
@@ -833,15 +838,15 @@ if __name__ == '__main__':
     #     print()
     #     print()
 
-    # for val in config.connectConfigs:
-    #     print(val)
-    #     print()
-    #     print()
+    for val in config.connectConfigs:
+        print(val)
+        print()
+        print()
 
-    for key, val in config.defaultConfigs.items():
-        print(key,val)
-        print()
-        print()
+    # for key, val in config.defaultConfigs.items():
+    #     print(key,val)
+    #     print()
+    #     print()
 
     print()
     print()
