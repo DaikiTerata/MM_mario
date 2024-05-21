@@ -465,7 +465,7 @@ class ConnectConfig:
         return self.__dict__ == __o.__dict__
 
 
-class DefaultConfig:
+class MainConfig:
     """初期設定情報
 
     シナリオファイル設定情報の初期設定値を保持する
@@ -580,27 +580,21 @@ class Config:
             elif 'LIST' in sheet_name:
                 # 接続設定情報シート名設定
                 list_sheet_list.append(sheet_name)
-            # シート名に「DEFALUT_OPTION」がある場合
-            elif 'DEFAULT_OPTION' in sheet_name:
-                # 初期設定情報シート名設定
-                default_sheet_name: str = sheet_name
         # 読み込んだ設定ファイルとメインシート名を引数に、メイン設定情報ロードを呼び出す
-        self.__mainConfigs: List[ScenarioConfig] = Config.__load_main_process_info(config_file, main_sheet_name)
+        self.__mainConfigs: Dict[str, MainConfig] = Config.__load_main_info(config_file, main_sheet_name)
         # 読み込んだ設定ファイルとサブシート名リストを引数に、サブ設定情報ロードを呼び出す
         self.__subConfigs: List[ScenarioConfig] = Config.__load_sub_process_info(config_file, sub_sheet_list)
         # 読み込んだ設定ファイルと接続設定情報シート名を引数に、接続設定情報ロードを呼び出す
         self.__connectConfigs: List[ConnectConfig] = Config.__load_connect_info(config_file, list_sheet_list)
-        # 読み込んだ設定ファイルと初期設定情報シート名を引数に、初期設定情報ロードを呼び出す
-        self.__defaultConfigs: Dict[str, DefaultConfig] = Config.__load_default_info(config_file, default_sheet_name)
 
     @property
-    def mainConfigs(self) -> List[ScenarioConfig]:
-        """メイン設定情報プロパティ
+    def mainConfigs(self) -> Dict[str, MainConfig]:
+        """初期設定情報プロパティ
 
-        インスタンス属性のメイン設定情報を取得する
+        インスタンス属性の初期設定情報を取得する
 
         Returns:
-            List[ScenarioConfig]: メイン設定情報
+            Dict[str, MainConfig]: 初期設定情報
         """
         return self.__mainConfigs
 
@@ -627,52 +621,29 @@ class Config:
             List[ConnectConfig]: 接続設定情報
         """
         return self.__connectConfigs
-    
-    @property
-    def defaultConfigs(self) -> Dict[str, DefaultConfig]:
-        """初期設定情報プロパティ
 
-        インスタンス属性の初期設定情報を取得する
-
-        Returns:
-            Dict[str, DefaultConfig]: 初期設定情報
-        """
-        return self.__defaultConfigs
-
-    def __load_main_process_info(config_file: pd.ExcelFile, main_sheet_name: str) -> List[ScenarioConfig]:
+    def __load_main_info(config_file: pd.ExcelFile, main_sheet_name: str) -> Dict[str, MainConfig]:
         """メイン設定情報ロード
 
         シナリオ設定情報ファイルの「MAIN」シートから情報を読み込み、メイン設定情報として返却する
 
         Args:
-            config_file (pd.ExcelFile): ホスト設定情報ファイル（pandasでExcelファイルを表すクラスのオブジェクト）
+            config_file (pd.ExcelFile): シナリオ設定情報ファイル（pandasでExcelファイルを表すオブジェクト）
 
         Returns:
-            maiConfigs: List[ScenarioConfig]: メイン設定情報 キーはシナリオ名
+            Dict[str, MainConfig]: 初期設定情報
         """
-        # 「MAIN」シートの情報を読み込む
-        main_collect_sheet = config_file.parse(main_sheet_name)
-        # シナリオ設定情報辞書を初期化する
-        mainConfigs: List[ScenarioConfig] = []
-        # コマンド設定情報辞書を初期化する
-        commandConfigs: List[CommandConfig] = []
+        # シナリオ設定情報ファイルから「DEFAULT_OPTION」シートの情報を読み込む
+        main_sheet = config_file.parse(main_sheet_name)
+        # 接続設定情報リストを初期化する
+        mainConfigs: Dict[str, MainConfig] = {}
+        # DEFAULT_OPTIONシートの行でループする
+        for row in [AsciiFilter(row) for _, row in main_sheet.iterrows()]:
+            # DEFAULT_OPTIONシートの行の初期設定項目名"KEY"がnullでない場合
+            if not pd.isnull(row.KEY):
+                # DEFAULT_OPTIONシートの行の情報から初期設定情報辞書を生成し、初期設定項目名"KEY"をキーに初期設定情報辞書に追加する
+                mainConfigs[row.KEY] = MainConfig(row.KEY, row.VALUE)
 
-        # MAINシートの行でループする
-        for row in [AsciiFilter(row) for _, row in main_collect_sheet.iterrows()]:
-            # MAINシートの行のシナリオ名がnullでない場合
-            if not pd.isnull(row.SCENARIO):
-                # 実行環境設定情報辞書を初期化する
-                commandConfigs: List[CommandConfig] = []
-                # シナリオ設定情報をMAINシートの行の情報と実行コマンド設定情報辞書で生成し、シナリオ設定情報辞書にシナリオ名"SCENARIO"をキーとして追加する
-                mainConfigs.append(ScenarioConfig(row.SCENARIO, commandConfigs))
-
-            # MAINシートの行の実行環境名がnullでない場合
-            if not pd.isnull(row.NODE):
-                # 実行コマンド設定情報をMAINシートの行の情報で生成し、実行コマンド設定情報辞書に実行コマンド項目名"ITEM"をキーとして追加する
-                commandConfigs.append(CommandConfig(row.NODE, row.ITEM, row.COMMAND, row.WHEN, 
-                                                    row.CHECK_KIND, row.RESULT_OK, row.RESULT_NG, row.OPTION))
-
-        # 収集設定情報辞書を返却する
         return mainConfigs
 
 
@@ -740,31 +711,6 @@ class Config:
                     connectConfigs.append(ConnectConfig(row.HOST, row.DN, row.DS, row.IP, row.VER,row.REGION, row.DEL_FLG))
         return connectConfigs
 
-    def __load_default_info(config_file: pd.ExcelFile, default_sheet_name: str) -> Dict[str, DefaultConfig]:
-        """初期設定情報ロード
-
-        シナリオ設定情報ファイルの「DEFAULT_OPTION」シートから情報を読み込み、初期設定情報として返却する
-
-        Args:
-            config_file (pd.ExcelFile): シナリオ設定情報ファイル（pandasでExcelファイルを表すオブジェクト）
-
-        Returns:
-            Dict[str, DefaultConfig]: 初期設定情報
-        """
-        # シナリオ設定情報ファイルから「DEFAULT_OPTION」シートの情報を読み込む
-        default_sheet = config_file.parse(default_sheet_name)
-        # 接続設定情報リストを初期化する
-        defaultConfigs: Dict[str, DefaultConfig] = {}
-        # DEFAULT_OPTIONシートの行でループする
-        for row in [AsciiFilter(row) for _, row in default_sheet.iterrows()]:
-            # DEFAULT_OPTIONシートの行の初期設定項目名"KEY"がnullでない場合
-            if not pd.isnull(row.KEY):
-                # DEFAULT_OPTIONシートの行の情報から初期設定情報辞書を生成し、初期設定項目名"KEY"をキーに初期設定情報辞書に追加する
-                defaultConfigs[row.KEY] = DefaultConfig(row.KEY, row.VALUE)
-
-        return defaultConfigs
-
-
     # def get_MoConfig_by_mo_host(self, mo_host: str) -> MoConfig:
     #     """収集設定情報取得
 
@@ -811,9 +757,9 @@ class Config:
 if __name__ == '__main__':
     config_file_name = 'C:\\prot_nf_auto\\bin\\MM_scenario_config.xlsx'
     config = Config(config_file_name)
-    # print(config.mainConfigs)
-    # print()
-    # print()
+    print(config.mainConfigs)
+    print()
+    print()
 
     # print(config.subConfigs)
     # print()
@@ -824,9 +770,9 @@ if __name__ == '__main__':
     # print()
     # print()
 
-    # print(config.defaultConfigs)
-    # print(config.defaultConfigs["timeout"]._DefaultConfig__value)
-    # print(type(config.defaultConfigs["timeout"]._DefaultConfig__value))
+    # print(config.mainConfigs)
+    # print(config.mainConfigs["timeout"]._MainConfig__value)
+    # print(type(config.mainConfigs["timeout"]._MainConfig__value))
 
     # for val in config.mainConfigs:
     #     print(val)
@@ -838,12 +784,12 @@ if __name__ == '__main__':
     #     print()
     #     print()
 
-    for val in config.connectConfigs:
-        print(val)
-        print()
-        print()
+    # for val in config.connectConfigs:
+    #     print(val)
+    #     print()
+    #     print()
 
-    # for key, val in config.defaultConfigs.items():
+    # for key, val in config.mainConfigs.items():
     #     print(key,val)
     #     print()
     #     print()
