@@ -1,0 +1,113 @@
+{'main': {'_ScenarioConfig__scenario': 'main', '_ScenarioConfig__commandConfigs': {'start': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'start', '_CommandConfig__command': 'print( {
+                    {scenario_name
+                    }
+                } + ": Start")', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'permit_host': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'permit_host', '_CommandConfig__command': 'permit_node("group",
+                {
+                    { Group_AMF
+                    }
+                })', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'heisoku_node_check': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'heisoku_node_check', '_CommandConfig__command': 'node_check()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'heisoku_mode_check': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'heisoku_mode_check', '_CommandConfig__command': 'mode_check()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'create_CroupAMF4east': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'create_CroupAMF4east', '_CommandConfig__command': 'create_group("GroupAMF",
+                "oym3-er-s01-amf-001,oym3-er-s02-amf-001,")', '_CommandConfig__when': 'heisoku_node_check.handover == "tam.*"||\n\'heisoku_node_check.handover == "oym.*"||\n\'heisoku_node_check.handover ==  "a[0-9].*"||', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'create_CroupAMF4west': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'create_CroupAMF4west', '_CommandConfig__command': 'create_group("GroupAMF",
+                "osc2-er-s01-amf-001,osc2-er-s02-amf-001,")', '_CommandConfig__when': 'heisoku_node_check.handover == "osc.*"||\n\'heisoku_node_check.handover == "chy.*"||\n\'heisoku_node_check.handover == "b[0-9].*"||', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'loop_dns_show': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_show', '_CommandConfig__command': 'SUB001.amf_dns_show({
+                    {Group_AMF
+                    }
+                }) ', '_CommandConfig__when': 'heisoku_mode_check.handover == "SHOW"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'loop_dns_del': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_del', '_CommandConfig__command': 'SUB002.amf_dns_del({
+                    {Group_AMF
+                    }
+                })', '_CommandConfig__when': 'heisoku_mode_check.handover == "DOWN"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'loop_dns_add': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_add', '_CommandConfig__command': 'SUB003.amf_dns_add({
+                    {Group_AMF
+                    }
+                })', '_CommandConfig__when': 'heisoku_mode_check.handover == "UP"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'end_mode_show_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_show_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_show.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'end_mode_down_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_down_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_del.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'end_mode_up_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_up_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_add.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'end_errror': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_errror', '_CommandConfig__command': 'complete_fail()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'end': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end', '_CommandConfig__command': '-', '_CommandConfig__when': '-', '_CommandConfig__check_kind': '-', '_CommandConfig__result_OK': '-', '_CommandConfig__result_NG': '-', '_CommandConfig__option': nan
+            }
+        }
+    }
+}
+
+
+{'main': {'_ScenarioConfig__scenario': 'main', '_ScenarioConfig__commandConfigs': {'MAIN_start': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'start', 
+'_CommandConfig__command': 'print( {
+                    {scenario_name
+                    }
+                } + ": Start")', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_permit_host': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'permit_host', '_CommandConfig__command': 'permit_node("group",
+                {
+                    { Group_AMF
+                    }
+                })', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_heisoku_node_check': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'heisoku_node_check', '_CommandConfig__command': 'node_check()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_heisoku_mode_check': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'heisoku_mode_check', '_CommandConfig__command': 'mode_check()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_create_CroupAMF4east': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'create_CroupAMF4east', '_CommandConfig__command': 'create_group("GroupAMF",
+                "oym3-er-s01-amf-001,oym3-er-s02-amf-001,")', '_CommandConfig__when': 'heisoku_node_check.handover == "tam.*"||\n\'heisoku_node_check.handover == "oym.*"||\n\'heisoku_node_check.handover ==  "a[0-9].*"||', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_create_CroupAMF4west': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'create_CroupAMF4west', '_CommandConfig__command': 'create_group("GroupAMF",
+                "osc2-er-s01-amf-001,osc2-er-s02-amf-001,")', '_CommandConfig__when': 'heisoku_node_check.handover == "osc.*"||\n\'heisoku_node_check.handover == "chy.*"||\n\'heisoku_node_check.handover == "b[0-9].*"||', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_loop_dns_show': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_show', '_CommandConfig__command': 'SUB001.amf_dns_show({
+                    {Group_AMF
+                    }
+                }) ', '_CommandConfig__when': 'heisoku_mode_check.handover == "SHOW"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'SUB': {'main': {'_ScenarioConfig__scenario': 'main', '_ScenarioConfig__commandConfigs': {'SUB001_start': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'start', '_CommandConfig__command': 'print( {
+                                {scenario_name
+                                }
+                            } + ": Start")', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 
+'SUB001_permit_host': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'permit_host', '_CommandConfig__command': 'permit_node("group",
+                            {
+                                { Group_AMF
+                                }
+                            })', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_heisoku_node_check': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'heisoku_node_check', '_CommandConfig__command': 'node_check()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_heisoku_mode_check': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'heisoku_mode_check', '_CommandConfig__command': 'mode_check()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_create_CroupAMF4east': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'create_CroupAMF4east', '_CommandConfig__command': 'create_group("GroupAMF",
+                            "oym3-er-s01-amf-001,oym3-er-s02-amf-001,")', '_CommandConfig__when': 'heisoku_node_check.handover == "tam.*"||\n\'heisoku_node_check.handover == "oym.*"||\n\'heisoku_node_check.handover ==  "a[0-9].*"||', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_create_CroupAMF4west': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'create_CroupAMF4west', '_CommandConfig__command': 'create_group("GroupAMF",
+                            "osc2-er-s01-amf-001,osc2-er-s02-amf-001,")', '_CommandConfig__when': 'heisoku_node_check.handover == "osc.*"||\n\'heisoku_node_check.handover == "chy.*"||\n\'heisoku_node_check.handover == "b[0-9].*"||', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_loop_dns_show': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_show', '_CommandConfig__command': 'SUB001.amf_dns_show({
+                                {Group_AMF
+                                }
+                            }) ', '_CommandConfig__when': 'heisoku_mode_check.handover == "SHOW"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_loop_dns_del': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_del', '_CommandConfig__command': 'SUB002.amf_dns_del({
+                                {Group_AMF
+                                }
+                            })', '_CommandConfig__when': 'heisoku_mode_check.handover == "DOWN"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_loop_dns_add': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_add', '_CommandConfig__command': 
+'SUB003.amf_dns_add({
+                                {Group_AMF
+                                }
+                            })', '_CommandConfig__when': 'heisoku_mode_check.handover == "UP"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_end_mode_show_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_show_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_show.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_end_mode_down_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_down_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_del.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_end_mode_up_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_up_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_add.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_end_errror': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_errror', '_CommandConfig__command': 'complete_fail()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+                        }, 'SUB001_end': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end', '_CommandConfig__command': '-', '_CommandConfig__when': '-', '_CommandConfig__check_kind': '-', '_CommandConfig__result_OK': '-', '_CommandConfig__result_NG': '-', '_CommandConfig__option': nan
+                        }
+                    }
+                }
+            }, 
+'MAIN_loop_dns_del': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_del', '_CommandConfig__command': 'SUB002.amf_dns_del({
+                    {Group_AMF
+                    }
+                })', '_CommandConfig__when': 'heisoku_mode_check.handover == "DOWN"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_loop_dns_add': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'loop_dns_add', '_CommandConfig__command': 'SUB003.amf_dns_add({
+                    {Group_AMF
+                    }
+                })', '_CommandConfig__when': 'heisoku_mode_check.handover == "UP"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_end_mode_show_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_show_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_show.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_end_mode_down_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_down_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_del.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_end_mode_up_success': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_mode_up_success', '_CommandConfig__command': 'complete_success()', '_CommandConfig__when': 'loop_dns_add.status == "OK"', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_end_errror': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end_errror', '_CommandConfig__command': 'complete_fail()', '_CommandConfig__when': 'any', '_CommandConfig__check_kind': 'TRUE_FALSE', '_CommandConfig__result_OK': True, '_CommandConfig__result_NG': 'FLASE', '_CommandConfig__option': nan
+            }, 'MAIN_end': {'_CommandConfig__node': 'MM', '_CommandConfig__item': 'end', '_CommandConfig__command': '-', '_CommandConfig__when': '-', '_CommandConfig__check_kind': '-', '_CommandConfig__result_OK': '-', '_CommandConfig__result_NG': '-', '_CommandConfig__option': nan
+            }
+        }
+    }
+}
