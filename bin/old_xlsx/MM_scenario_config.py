@@ -51,29 +51,23 @@ class CommandConfig:
 
     """
 
-    def __init__(self, node: str, no: str, task: str, item: str, when: str, command: str, var: str, check_kind: str, result_OK: str, result_NG: str, option: str):
+    def __init__(self, node: str, item: str, command: str, when: str, check_kind: str, result_OK: str, result_NG: str, option: str):
         """初期化
 
         Args:
             node (str): 実行環境名 コマンド実行する環境
-            no(str): 実行採番 コマンドを実行する順番
-            task(str): コマンド概要項目 実行するコマンドの概要
-            item (str): コマンド要素 実行するコマンドの要素数
-            when (str): 実行条件項目 コマンドを実行する条件の項目 
-            command (str): コマンド名 実行するコマンド   
-            var(str): コマンド実行元 コマンド実行元の変数名        
+            item (str): コマンド概要項目 実行するコマンドの概要
+            command (str): コマンド名 実行するコマンド
+            when (str): 実行条件項目 コマンドを実行する条件の項目            
             check_kind (str): 確認条件項目 result_OK/result_NGで確認する条件
             result_OK (str): 正常結果判定項目 コマンド実行結果と比較して正常と判定される項目名
             result_NG (str): 異常結果判定項目 コマンド実行結果と比較して異常と判定される項目名
             option (str): 後続処理判定項目 エラー時、後続処理を停止するか判定する項目 disableである場合は後続処理を停止せずに実行、ableの場合は後続処理を停止させる
         """
         self.__node: str = node
-        self.__no: str = no
-        self.__task: str = task
         self.__item: str = item
-        self.__when: str = when
         self.__command: str = command
-        self.__var: str = task
+        self.__when: str = when
         self.__check_kind: str = check_kind
         self.__result_OK: str = result_OK
         self.__result_NG: str = result_NG
@@ -91,28 +85,6 @@ class CommandConfig:
         return self.__node
 
     @property
-    def no(self) -> str:
-        """実行採番プロパティ
-
-        インスタンス属性の実行採番を取得する
-
-        Returns:
-            str: インスタンス属性の実行採番
-        """
-        return self.__no
-
-    @property
-    def task(self) -> str:
-        """xxxxプロパティ
-
-        インスタンス属性のxxxxを取得する
-
-        Returns:
-            str: インスタンス属性のxxxx
-        """
-        return self.__task
-
-    @property
     def item(self) -> str:
         """コマンド概要項目情報プロパティ
 
@@ -124,17 +96,6 @@ class CommandConfig:
         return self.__item
 
     @property
-    def when(self) -> str:
-        """実行条件項目プロパティ
-
-        インスタンス属性の実行条件項目を取得する
-
-        Returns:
-            str: インスタンス属性の実行条件項目
-        """
-        return self.__when
-
-    @property
     def command(self) -> str:
         """コマンドプロパティ
 
@@ -144,17 +105,17 @@ class CommandConfig:
             str: インスタンス属性のコマンド
         """
         return self.__command
-
+    
     @property
-    def var(self) -> str:
-        """コマンド実行元プロパティ
+    def when(self) -> str:
+        """実行条件項目プロパティ
 
-        インスタンス属性のコマンド実行元を取得する
+        インスタンス属性の実行条件項目を取得する
 
         Returns:
-            str: インスタンス属性のコマンド実行元
+            str: インスタンス属性の実行条件項目
         """
-        return self.__var
+        return self.__when
 
     @property
     def check_kind(self) -> str:
@@ -718,8 +679,8 @@ class Config:
                 # SUBシートの行の実行環境名がnullでない場合
                 if not pd.isnull(row.NODE):
                     # 実行コマンド設定情報をSUBシートの行の情報で生成し、実行コマンド設定情報辞書に実行コマンド項目名"ITEM"をキーとして追加する
-                    commandConfigs.append(CommandConfig(row.NODE, row.NO, row.TASK, row.ITEM, row.WHEN, row.COMMAND, 
-                                                        row.VAR, row.CHECK_KIND, row.RESULT_OK, row.RESULT_NG, row.OPTION))
+                    commandConfigs.append(CommandConfig(row.NODE, row.ITEM, row.COMMAND, row.WHEN, 
+                                                        row.CHECK_KIND, row.RESULT_OK, row.RESULT_NG, row.OPTION))
         # 収集設定情報辞書を返却する
         return subConfigs
 
