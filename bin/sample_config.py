@@ -731,7 +731,7 @@ class Config:
             # LIST001シートの行のコマンド実行ホスト名"HOST"がnullでない場合
             if not pd.isnull(row.HOST):
                 # LISTシートの行の情報から接続設定情報を生成し、接続設定情報リストに追加する
-                connectConfigs.append(ConnectConfig(row.HOST, row.DN, row.DS, row.IP, row.VER,row.REGION, row.DEL_FLG, row.USER, row.PASS, row.KEY))
+                connectConfigs.append(ConnectConfig(row.HOST, row.DN, row.DS, row.IP, row.VER,row.REGION, row.DEL_FLG, row.USER, row.PASSWD, row.KEY))
         return connectConfigs
 
 
@@ -833,15 +833,15 @@ if __name__ == '__main__':
     #     print()
     #     print()
 
-    for val in config.connectConfigs:
-        print(val)
-        print()
-        print()
+    # for val in config.connectConfigs:
+    #     print(val)
+    #     print()
+    #     print()
 
-    # for key, val in config.defaultConfigs.items():
-    #     print(key,val)
-    #     print()
-    #     print()
+    for key, val in config.defaultConfigs.items():
+        print(key,val)
+        print()
+        print()
 
     print()
     print()
