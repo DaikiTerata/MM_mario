@@ -73,7 +73,7 @@ class CommandConfig:
         self.__item: str = item
         self.__when: str = when
         self.__command: str = command
-        self.__var: str = var
+        self.__var: str = task
         self.__check_kind: str = check_kind
         self.__result_OK: str = result_OK
         self.__result_NG: str = result_NG
@@ -313,89 +313,53 @@ class ScenarioConfig:
         return self.__dict__ == __o.__dict__
 
 
-class ListConfig:
+class ConnectConfig:
     """接続設定情報
 
     NF設備への接続のための設定を保持する
 
     """
 
-    def __init__(self, nf: str, remote_host:str, cNRF_AMF: str, cNRF: str, host:str,
-                 dn: str, ns: str, ip: str, ver: int, region: str, del_flg: int) -> None:
+    def __init__(self, nf_host: str, nf_dn: str, nf_ds: str, nf_ip: str, nf_ver: int, nf_region: str, 
+                 nf_del_flg: int, nf_user: str, nf_pass: str, nf_key: str) -> None:
         """初期化
 
         Args:
-            nf (str): コマンド実行対象ホスト名 コマンドを実行する対象となるホスト名
-            remote_host(str): SSH接続ホスト名 SSH接続を行うホスト名
-            cNRF_AMF(str): cNFR-AMFホスト名
-            cNRF(str): cNRFホスト名 cNRFのホスト名
-            host(str): 
-            dn (str): 
-            ns (str): 
-            ip (str): 接続先IPアドレス
-            ver (int): 
-            region(str): 実行地域
-            del_flg(int): 
+            nf_host (str): コマンド実行ホスト名 コマンドを実行するホスト名
+            nf_dn (str): 
+            nf_ds (str): 
+            nf_ip (str): 接続先IPアドレス
+            nf_ver (int): 
+            nf_region(str): 実行地域
+            nf_del_flg(int): 
 
         """
-        self.__nf: str = nf
-        self.__remote_host: str = remote_host
-        self.__cNRF_AMF: str = cNRF_AMF
-        self.__cNRF: str = cNRF
-        self.__host:str = host
-        self.__dn: str = dn
-        self.__ns: str = ns
-        self.__ip: str = ip
-        self.__ver: int = int(ver)
-        self.__region: str = region
-        self.__del_flg: int = int(del_flg)
+        self.__nf_host: str = nf_host
+        self.__nf_dn: str = nf_dn
+        self.__nf_ds: str = nf_ds
+        self.__nf_ip: str = nf_ip
+        self.__nf_ver: int = int(nf_ver)
+        self.__nf_region: str = nf_region
+        self.__nf_del_flg: int = int(nf_del_flg)
+        self.__nf_user: str = nf_user
+        self.__nf_pass: str = nf_pass
+        self.__nf_key: str = nf_key
 
 
     @property
-    def nf(self) -> str:
-        """コマンド実行対象ホスト名プロパティ
+    def nf_host(self) -> str:
+        """コマンド実行ホスト名プロパティ
 
-        インスタンス属性のコマンド実行対象ホスト名を取得する
+        インスタンス属性のコマンド実行ホスト名を取得する
 
         Returns:
-            str: インスタンス属性のコマンド実行対象ホスト名
+            str: インスタンス属性のコマンド実行ホスト名
         """
-        return self.__nf
+        return self.__nf_host
+
 
     @property
-    def remote_host(self) -> str:
-        """SSH接続ホスト名プロパティ
-
-        インスタンス属性のSSH接続ホスト名を取得する
-
-        Returns:
-            str: インスタンス属性のSSH接続ホスト名
-        """
-        return self.__remote_host
-
-    @property
-    def cNRF_AMF(self) -> str:
-        """
-
-        """
-        return self.__cNRF_AMF
-
-    @property
-    def cNRF(self) -> str:
-        """
-        
-        """
-        return self.__cNRF
-
-    @property
-    def host(self) -> str:
-        """
-        
-        """
-        return self.__host
-
-    @property
-    def dn(self) -> str:
+    def nf_dn(self) -> str:
         """プロパティ
 
         インスタンス属性のを取得する
@@ -403,11 +367,11 @@ class ListConfig:
         Returns:
             str: インスタンス属性の
         """
-        return self.__dn
+        return self.__nf_dn
 
 
     @property
-    def ns(self) -> str:
+    def nf_ds(self) -> str:
         """プロパティ
 
         インスタンス属性のを取得する
@@ -415,11 +379,11 @@ class ListConfig:
         Returns:
             str: インスタンス属性の
         """
-        return self.__ns
+        return self.__nf_ds
 
 
     @property
-    def ip(self) -> str:
+    def nf_ip(self) -> str:
         """接続先IPプロパティ
 
         インスタンス属性の接続先IPを取得する
@@ -427,11 +391,11 @@ class ListConfig:
         Returns:
             str: インスタンス属性の接続先IP
         """
-        return self.__ip
+        return self.__nf_ip
 
 
     @property
-    def ver(self) -> int:
+    def nf_ver(self) -> int:
         """プロパティ
 
         インスタンス属性のを取得する
@@ -439,11 +403,11 @@ class ListConfig:
         Returns:
             bool: インスタンス属性の
         """
-        return self.__ver
+        return self.__nf_ver
 
 
     @property
-    def region(self) -> str:
+    def nf_region(self) -> str:
         """実行地域プロパティ
 
         インスタンス属性の実行地域を取得する
@@ -451,11 +415,11 @@ class ListConfig:
         Returns:
             bool: インスタンス属性の実行地域
         """
-        return self.__region
+        return self.__nf_region
 
 
     @property
-    def del_flg(self) -> int:
+    def nf_del_flg(self) -> int:
         """プロパティ
 
         インスタンス属性のを取得する
@@ -463,7 +427,44 @@ class ListConfig:
         Returns:
             int: インスタンス属性の
         """
-        return self.__del_flg
+        return self.__nf_del_flg
+
+    
+    @property
+    def nf_user(self) -> str:
+        """プロパティ
+
+        インスタンス属性のを取得する
+
+        Returns:
+            int: インスタンス属性の
+        """
+        return self.__nf_user
+
+
+    @property
+    def nf_pass(self) -> str:
+        """プロパティ
+
+        インスタンス属性のを取得する
+
+        Returns:
+            int: インスタンス属性の
+        """
+        return self.__nf_pass
+    
+
+    @property
+    def nf_key(self) -> str:
+        """プロパティ
+
+        インスタンス属性のを取得する
+
+        Returns:
+            int: インスタンス属性の
+        """
+        return self.__nf_key
+
 
     def __str__(self) -> str:
         """インスタンスの文字列表示
@@ -623,7 +624,7 @@ class Config:
         # 読み込んだ設定ファイルとサブシート名リストを引数に、サブ設定情報ロードを呼び出す
         self.__subConfigs: List[ScenarioConfig] = Config.__load_sub_process_info(config_file, sub_sheet_list)
         # 読み込んだ設定ファイルと接続設定情報シート名を引数に、接続設定情報ロードを呼び出す
-        self.__listConfigs: List[ListConfig] = Config.__load_list_info(config_file, list_sheet_list)
+        self.__connectConfigs: List[ConnectConfig] = Config.__load_connect_info(config_file, list_sheet_list)
 
     @property
     def mainConfigs(self) -> Dict[str, MainConfig]:
@@ -649,16 +650,16 @@ class Config:
         return self.__subConfigs
 
     @property
-    def listConfigs(self) -> List[ListConfig]:
+    def connectConfigs(self) -> List[ConnectConfig]:
         """接続設定情報プロパティ
 
         インスタンス属性の接続設定情報を取得する
         接続設定情報シートがある限り、読み込む
 
         Returns:
-            List[ListConfig]: 接続設定情報
+            List[ConnectConfig]: 接続設定情報
         """
-        return self.__listConfigs
+        return self.__connectConfigs
 
     def __load_main_info(config_file: pd.ExcelFile, main_sheet_name: str) -> Dict[str, MainConfig]:
         """メイン設定情報ロード
@@ -723,7 +724,7 @@ class Config:
         return subConfigs
 
 
-    def __load_list_info(config_file: pd.ExcelFile, list_sheet_list: List) -> List[ListConfig]:
+    def __load_connect_info(config_file: pd.ExcelFile, list_sheet_list: List) -> List[ConnectConfig]:
         """接続設定情報ロード
 
         シナリオ設定情報ファイルの「LIST」シートから情報を読み込み、接続設定情報として返却する
@@ -733,10 +734,10 @@ class Config:
             config_file (pd.ExcelFile): シナリオ設定情報ファイル（pandasでExcelファイルを表すオブジェクト）
 
         Returns:
-            List[ListConfig]: 接続設定情報
+            List[ConnectConfig]: 接続設定情報
         """
         # 接続設定情報リストを初期化する
-        listConfigs: List[ListConfig] = []
+        connectConfigs: List[ConnectConfig] = []
         # 引渡されたリストシート名リストに格納されているリストシート名を順に呼び出す
         for list_sheet_name in list_sheet_list:
             # リストに格納されている順に取得したリスト名のシナリオ取得
@@ -746,9 +747,8 @@ class Config:
                 # LISTシートの行のコマンド実行ホスト名"HOST"がnullでない場合
                 if not pd.isnull(row.HOST):
                     # LISTシートの行の情報から接続設定情報を生成し、接続設定情報リストに追加する
-                    listConfigs.append(ListConfig(row.NF, row.REMOTE_HOST, row.cNRF_AMF, row.cNRF, row.HOST,
-                                                         row.DN, row.NS, row.IP, row.VER,row.REGION, row.DEL_FLG))
-        return listConfigs
+                    connectConfigs.append(ConnectConfig(row.HOST, row.DN, row.DS, row.IP, row.VER,row.REGION, row.DEL_FLG))
+        return connectConfigs
 
     # def get_MoConfig_by_mo_host(self, mo_host: str) -> MoConfig:
     #     """収集設定情報取得
@@ -794,7 +794,7 @@ class Config:
 
 
 if __name__ == '__main__':
-    config_file_name = 'C:\\prot_nf_auto\\bin\\MM_scenario_config.xlsx'
+    config_file_name = 'C:\\prot_nf_auto\\bin\\old_xlsx\\MM_scenario_config.xlsx'
     config = Config(config_file_name)
     print(config.mainConfigs)
     print()
@@ -804,12 +804,8 @@ if __name__ == '__main__':
     # print()
     # print()
 
-    # print(config.listConfigs)
-    # print()
-    # print()
-
     # # print(config.subConfigs[0]._ScenarioConfig__commandConfigs[0])
-    # print(config.listConfigs)
+    # print(config.connectConfigs)
     # print()
     # print()
 
@@ -827,17 +823,15 @@ if __name__ == '__main__':
     #     print()
     #     print()
 
-    # for val in config.listConfigs:
+    # for val in config.connectConfigs:
     #     print(val)
     #     print()
     #     print()
 
-    for key, val in config.mainConfigs.items():
-        print(key,val)
-        print(key)
-        print(val._MainConfig__value)
-        print()
-        print()
+    # for key, val in config.mainConfigs.items():
+    #     print(key,val)
+    #     print()
+    #     print()
 
     print()
     print()
