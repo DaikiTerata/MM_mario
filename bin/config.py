@@ -1110,13 +1110,14 @@ if __name__ == '__main__':
     config_file_name = 'C:\\FY23_GCP2.0\\T1AR001\\bin\\impact_sampling_config.xlsx'
     config = Config(config_file_name)
     # print(config.moConfigs.values())
-    for mohost in config.moConfigs.values():
-        print(mohost.mo_host)
-        # print(type(mohost.mo_host))
-        tam_host = mohost.mo_host.replace("001", "")
-        print(tam_host)
-        print(mohost.mo_host)
+    # for mohost in config.moConfigs.values():
+    #     print(mohost.mo_host)
+    #     # print(type(mohost.mo_host))
+    #     tam_host = mohost.mo_host.replace("001", "")
+    #     print(tam_host)
+    #     print(mohost.mo_host)
     # print(config.cmdHostConfigs['tam5-er-s01-amf-001'])
     # print(config.cmdHostConfigs['tam5-er-s01-amf-001']._CmdHostConfig__cmdConfigs.keys())
     # print(config.connectConfigs[0])
     # print(type(config.moConfigs))
+    print(config.get_cmdHostConfig_by_nf_host('tam5-er-s01-amf-001'))
