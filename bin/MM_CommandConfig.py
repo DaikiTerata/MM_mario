@@ -12,8 +12,7 @@ class CommandConfig:
 
     """
 
-    def __init__(self, node: str, no: str, task: str, item: str, when: str, command: str, var: str,
-                check_kind: str, result_OK: str, result_NG: str, option: str):
+    def __init__(self, node: str, no: str, task: str, item: str, when: str, command: str, var: str, check_kind: str, result_OK: str, result_NG: str, option: str):
         """初期化
 
         Args:

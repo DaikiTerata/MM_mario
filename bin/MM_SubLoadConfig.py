@@ -11,8 +11,6 @@ from typing import List, Dict, Any
 
 from MM_CommandConfig import CommandConfig
 from MM_ScenarioConfig import ScenarioConfig
-from MM_ListConfig import ListConfig
-from MM_MainConfig import MainConfig
 
 
 class AsciiFilter:
@@ -48,7 +46,7 @@ class AsciiFilter:
             return org.replace('\u00a0', '\u0020').encode('ascii', 'ignore').decode('utf-8')
         return org
 
-class Config:
+class SubLoadConfig:
     """設定情報
 
     シナリオ設定情報ファイルを読み込み、ファイルに設定されたメイン処理設定情報、接続設定情報、サブ処理設定情報を保持する
@@ -69,39 +67,14 @@ class Config:
         config_sheet_name: List = config_file.sheet_names
         # サブシート名リスト初期化
         sub_sheet_list: List = []
-        # リストシート名リスト初期化
-        list_sheet_list: List = []
         # 設定ファイルのシート名リストから、各シート名を繰り返し取り出す
         for sheet_name in config_sheet_name:
-            # シート名が「MAIN」である場合
-            if 'MAIN' in sheet_name:
-                # メインシート名設定
-                main_sheet_name: str = sheet_name
             # シート名に「SUB」が含まれる場合
-            elif 'SUB' in sheet_name:
+            if 'SUB' in sheet_name:
                 # サブシート名リストに格納
                 sub_sheet_list.append(sheet_name)
-            # シート名に「LIST001」がある場合
-            elif 'LIST' in sheet_name:
-                # 接続設定情報シート名設定
-                list_sheet_list.append(sheet_name)
-        # 読み込んだ設定ファイルとメインシート名を引数に、メイン設定情報ロードを呼び出す
-        self.__mainConfigs: Dict[str, MainConfig] = Config.__load_main_info(config_file, main_sheet_name)
         # 読み込んだ設定ファイルとサブシート名リストを引数に、サブ設定情報ロードを呼び出す
-        self.__subConfigs: Dict[str, ScenarioConfig] = Config.__load_sub_process_info(config_file, sub_sheet_list)
-        # 読み込んだ設定ファイルと接続設定情報シート名を引数に、接続設定情報ロードを呼び出す
-        self.__listConfigs: List[ListConfig] = Config.__load_list_info(config_file, list_sheet_list)
-
-    @property
-    def mainConfigs(self) -> Dict[str, MainConfig]:
-        """初期設定情報プロパティ
-
-        インスタンス属性の初期設定情報を取得する
-
-        Returns:
-            Dict[str, MainConfig]: 初期設定情報
-        """
-        return self.__mainConfigs
+        self.__subConfigs: Dict[str, ScenarioConfig] = SubLoadConfig.__load_sub_process_info(config_file, sub_sheet_list)
 
     @property
     def subConfigs(self) -> Dict[str, ScenarioConfig]:
@@ -114,42 +87,6 @@ class Config:
             Dict[str, ScenarioConfig]: サブ設定情報
         """
         return self.__subConfigs
-
-    @property
-    def listConfigs(self) -> List[ListConfig]:
-        """接続設定情報プロパティ
-
-        インスタンス属性の接続設定情報を取得する
-        接続設定情報シートがある限り、読み込む
-
-        Returns:
-            List[ListConfig]: 接続設定情報
-        """
-        return self.__listConfigs
-
-    def __load_main_info(config_file: pd.ExcelFile, main_sheet_name: str) -> Dict[str, MainConfig]:
-        """メイン設定情報ロード
-
-        シナリオ設定情報ファイルの「MAIN」シートから情報を読み込み、メイン設定情報として返却する
-
-        Args:
-            config_file (pd.ExcelFile): シナリオ設定情報ファイル（pandasでExcelファイルを表すオブジェクト）
-
-        Returns:
-            Dict[str, MainConfig]: 初期設定情報
-        """
-        # シナリオ設定情報ファイルから「DEFAULT_OPTION」シートの情報を読み込む
-        main_sheet = config_file.parse(main_sheet_name)
-        # 接続設定情報リストを初期化する
-        mainConfigs: Dict[str, MainConfig] = {}
-        # DEFAULT_OPTIONシートの行でループする
-        for row in [AsciiFilter(row) for _, row in main_sheet.iterrows()]:
-            # DEFAULT_OPTIONシートの行の初期設定項目名"KEY"がnullでない場合
-            if not pd.isnull(row.KEY):
-                # DEFAULT_OPTIONシートの行の情報から初期設定情報辞書を生成し、初期設定項目名"KEY"をキーに初期設定情報辞書に追加する
-                mainConfigs[row.KEY] = MainConfig(row.KEY, row.VALUE)
-
-        return mainConfigs
 
 
     def __load_sub_process_info(config_file: pd.DataFrame, sub_sheet_list: Dict) -> Dict[str, ScenarioConfig]:
@@ -174,6 +111,15 @@ class Config:
             sub_collect_sheet = config_file.parse(sub_sheet_name)
             # SUBシートの行でループする
             for row in [AsciiFilter(row) for _, row in sub_collect_sheet.iterrows()]:
+                # 各列の1行目をキー、2行目以降を値として格納しているものを変数化
+                sub_cmd_items = row.__dict__.items()
+                # cmd情報リストを初期化
+                sub_cmd_list = []
+                for sub_cmd_key, sub_cmd_val in sub_cmd_items:
+                    # CommandConfigにSCENARIO列情報はいらないため、除外
+                    if not sub_cmd_key == 'SCENARIO':
+                        # cmd情報リストにSCENARIO列情報以外を格納
+                        sub_cmd_list.append(sub_cmd_val)
                 # SUBシートの行のシナリオ名がnullでない場合
                 if not pd.isnull(row.SCENARIO):
                     # コマンド設定情報辞書を初期化する
@@ -181,54 +127,25 @@ class Config:
                     # シナリオ設定情報をSUB001シートの行の情報と実行コマンド設定情報辞書で生成し、シナリオ設定情報辞書にシナリオ名"SCENARIO"をキーとして追加する
                     subConfigs[row.SCENARIO] = ScenarioConfig(row.SCENARIO, commandConfigs)
 
-                # SUBシートの行の実行環境名がnullでない場合
-                if not pd.isnull(row.NODE):
+                # SUBシートの行の実行コマンド概要がnullでない場合
+                if not pd.isnull(row.ITEM):
                     # 実行コマンド設定情報をSUBシートの行の情報で生成し、実行コマンド設定情報辞書に実行コマンド項目名"ITEM"をキーとして追加する
-                    commandConfigs[row.SCENARIO] = CommandConfig(row.NODE, row.NO, row.TASK, row.ITEM, row.WHEN, row.COMMAND, 
-                                                        row.VAR, row.CHECK_KIND, row.RESULT_OK, row.RESULT_NG, row.OPTION)
+                    commandConfigs[row.ITEM] = CommandConfig(*sub_cmd_list)
         # 収集設定情報辞書を返却する
         return subConfigs
 
+    # def get_scenario(self, scenario: str) -> ScenarioConfig:
+    #     """シナリオ設定情報取得
 
-    def __load_list_info(config_file: pd.ExcelFile, list_sheet_list: List) -> List[ListConfig]:
-        """接続設定情報ロード
+    #     指定されたシナリオ名に関連する設定情報を、保持しているシナリオ設定情報から取得する
 
-        シナリオ設定情報ファイルの「LIST」シートから情報を読み込み、接続設定情報として返却する
-        「LIST」シートがある限り、設定情報を読み込む
+    #     Args:
+    #         scenario(str): シナリオ名
 
-        Args:
-            config_file (pd.ExcelFile): シナリオ設定情報ファイル（pandasでExcelファイルを表すオブジェクト）
-
-        Returns:
-            List[ListConfig]: 接続設定情報
-        """
-        # 接続設定情報リストを初期化する
-        listConfigs: List[ListConfig] = []
-        # 引渡されたリストシート名リストに格納されているリストシート名を順に呼び出す
-        for list_sheet_name in list_sheet_list:
-            # リストに格納されている順に取得したリスト名のシナリオ取得
-            list_collect_sheet = config_file.parse(list_sheet_name)
-            # LISTシートの行でループする
-            for row in [AsciiFilter(row) for _, row in list_collect_sheet.iterrows()]:
-                # LISTシートの行のコマンド実行ホスト名"HOST"がnullでない場合
-                if not pd.isnull(row.HOST):
-                    # LISTシートの行の情報から接続設定情報を生成し、接続設定情報リストに追加する
-                    listConfigs.append(ListConfig(row.NF, row.REMOTE_HOST, row.cNRF_AMF, row.cNRF, row.HOST,
-                                                         row.DN, row.NS, row.IP, row.VER,row.REGION, row.DEL_FLG))
-        return listConfigs
-
-    def get_scenario(self, scenario: str) -> ScenarioConfig:
-        """シナリオ設定情報取得
-
-        指定されたシナリオ名に関連する設定情報を、保持しているシナリオ設定情報から取得する
-
-        Args:
-            scenario(str): シナリオ名
-
-        Returns:
-            ScenarioConfig: 指定されたシナリオ名に関連するシナリオ設定情報
-        """
-        return self.__subConfigs.get(scenario)
+    #     Returns:
+    #         ScenarioConfig: 指定されたシナリオ名に関連するシナリオ設定情報
+    #     """
+    #     return self.__subConfigs.get(scenario)
 
     # def get_ConnectConfig_by_nf_host(self, nf_host: str) -> ConnectConfig:
     #     """接続設定情報取得
@@ -261,8 +178,8 @@ class Config:
 
 
 if __name__ == '__main__':
-    config_file_name = 'C:\\prot_nf_auto\\bin\\MM_scenario_config.xlsx'
-    config = Config(config_file_name)
+    config_file_name = 'C:\\python\\MM_scenario_config.xlsx'
+    config = SubLoadConfig(config_file_name)
     # print(config.mainConfigs)
     # print()
     # print()
@@ -285,20 +202,36 @@ if __name__ == '__main__':
     # print(config.mainConfigs["timeout"]._MainConfig__value)
     # print(type(config.mainConfigs["timeout"]._MainConfig__value))
 
-    # for val in config.mainConfigs:
-    #     print(val)
+    # for key, val in config.mainConfigs.items():
+    #     # print(key, val)
+    #     print(key)
+    #     print(val._MainConfig__value)
     #     print()
     #     print()
 
     for key, val in config.subConfigs.items():
         # print(key, val)
-        # print(key)
+        print(key)
         # print(val)
         # print(val._ScenarioConfig__commandConfigs)
         print()
-        print()
+        # print()
         for dp_key, dp_val  in val._ScenarioConfig__commandConfigs.items():
-            print(dp_key, dp_val)
+            # print(dp_key, dp_val)
+            print(dp_key)
+            print(dp_val)
+            print()
+            print()
+
+    # for key, val in config.listConfigs.items():
+    #     # print(key, val)
+    #     print(key)
+    #     print(val)
+    #     # print(val._ScenarioConfig__commandConfigs)
+    #     print()
+    #     print()
+    #     # for dp_key, dp_val  in val.items():
+    #     #     print(dp_key, dp_val)
 
     # for val in config.listConfigs:
     #     print(val)
