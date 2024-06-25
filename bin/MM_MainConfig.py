@@ -4,6 +4,9 @@ import pandas.core.series
 import openpyxl
 from typing import List, Dict, Any
 
+key_list = []
+value_list = []
+
 class MainConfig:
     """初期設定情報
 

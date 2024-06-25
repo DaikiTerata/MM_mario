@@ -89,7 +89,7 @@ class SubLoadConfig:
         return self.__subConfigs
 
 
-    def __load_sub_process_info(config_file: pd.DataFrame, sub_sheet_list: Dict) -> Dict[str, ScenarioConfig]:
+    def __load_sub_process_info(config_file: pd.DataFrame, sub_sheet_list: List) -> Dict[str, ScenarioConfig]:
         """サブ設定情報ロード
 
         シナリオ設定情報ファイルの「SUB」シートから情報を読み込み、サブ設定情報として返却する
@@ -101,10 +101,10 @@ class SubLoadConfig:
         Returns:
             subConfigs: Dict[str, ScenarioConfig]: サブ設定情報 キーはシナリオ名
         """
-        # シナリオ設定情報辞書を初期化する
-        subConfigs: Dict[str, ScenarioConfig] = {}
-        # コマンド設定情報辞書を初期化する
-        commandConfigs: Dict[str, CommandConfig] = {}
+        # シナリオ設定情報リストを初期化する
+        subConfigs: List[ScenarioConfig] = []
+        # コマンド設定情報リストを初期化する
+        commandConfigs: List[CommandConfig] = []
         # 引渡されたサブシート名リストに格納されているサブシート名を順に呼び出す
         for sub_sheet_name in sub_sheet_list:
             # リストに格納されている順に取得したサブシート名のシナリオ設定ファイルを取得
@@ -122,30 +122,116 @@ class SubLoadConfig:
                         sub_cmd_list.append(sub_cmd_val)
                 # SUBシートの行のシナリオ名がnullでない場合
                 if not pd.isnull(row.SCENARIO):
-                    # コマンド設定情報辞書を初期化する
-                    commandConfigs: Dict[str, CommandConfig] = {}
+                    # コマンド設定情報を初期化する
+                    commandConfigs: List[CommandConfig] = []
                     # シナリオ設定情報をSUB001シートの行の情報と実行コマンド設定情報辞書で生成し、シナリオ設定情報辞書にシナリオ名"SCENARIO"をキーとして追加する
-                    subConfigs[row.SCENARIO] = ScenarioConfig(row.SCENARIO, commandConfigs)
+                    subConfigs.append(ScenarioConfig(row.SCENARIO, commandConfigs))
 
                 # SUBシートの行の実行コマンド概要がnullでない場合
                 if not pd.isnull(row.ITEM):
                     # 実行コマンド設定情報をSUBシートの行の情報で生成し、実行コマンド設定情報辞書に実行コマンド項目名"ITEM"をキーとして追加する
-                    commandConfigs[row.ITEM] = CommandConfig(*sub_cmd_list)
+                    commandConfigs.append(CommandConfig(*sub_cmd_list))
         # 収集設定情報辞書を返却する
         return subConfigs
 
-    # def get_scenario(self, scenario: str) -> ScenarioConfig:
-    #     """シナリオ設定情報取得
 
-    #     指定されたシナリオ名に関連する設定情報を、保持しているシナリオ設定情報から取得する
+    def get_scenario(self, scenario: str) -> ScenarioConfig:
+        """シナリオ設定情報取得
 
-    #     Args:
-    #         scenario(str): シナリオ名
+        指定されたシナリオ名に関連する設定情報を、保持しているシナリオ設定情報から取得する
 
-    #     Returns:
-    #         ScenarioConfig: 指定されたシナリオ名に関連するシナリオ設定情報
-    #     """
-    #     return self.__subConfigs.get(scenario)
+        Args:
+            scenario(str): シナリオ名
+
+        Returns:
+            ScenarioConfig: 指定されたシナリオ名に関連するシナリオ設定情報
+        """
+        return self.__subConfigs.get(scenario)
+
+
+    def get_item(self, scenario: str, item: str) -> CommandConfig:
+        """コマンド概要項目情報取得
+
+        指定されたシナリオ名とコマンド概要項目に関連する設定情報を、保持している実行コマンド設定情報から取得する
+
+        Args:
+            scenario(str): シナリオ名
+            item(str): コマンド概要項目
+
+        Returns:
+            CommandConfig: 指定されたコマンド概要項目に関連する実行コマンド設定情報
+        """
+        scenarioConf = self.__subConfigs.get(scenario)
+        return scenarioConf._ScenarioConfig__commandConfigs.get(item)
+
+
+    def get_node(self, scenario: str, item: str) -> CommandConfig:
+        """実行環境名取得
+
+        指定されたシナリオ名とコマンド概要項目に関連する実行環境情報を、保持している実行コマンド設定情報から取得する
+
+        Args:
+            scenario(str): シナリオ名
+            item(str): コマンド概要項目
+
+        Returns:
+            CommandConfig: 指定されたコマンド概要項目に関連する実行環境情報
+        """
+        scenarioConf = self.__subConfigs.get(scenario)
+        itemConf = scenarioConf._ScenarioConfig__commandConfigs.get(item)
+        return itemConf._CommandConfig__node
+
+
+    def get_no(self, scenario: str, item: str) -> CommandConfig:
+        """コマンド採番取得
+
+        指定されたシナリオ名とコマンド概要項目に関連するコマンド採番を、保持している実行コマンド設定情報から取得する
+
+        Args:
+            scenario(str): シナリオ名
+            item(str): コマンド概要項目
+
+        Returns:
+            CommandConfig: 指定されたコマンド概要項目に関連するコマンド採番
+        """
+        scenarioConf = self.__subConfigs.get(scenario)
+        itemConf = scenarioConf._ScenarioConfig__commandConfigs.get(item)
+        return itemConf._CommandConfig__no
+
+
+    def get_no(self, scenario: str, item: str) -> CommandConfig:
+        """コマンド採番取得
+
+        指定されたシナリオ名とコマンド概要項目に関連するコマンド採番を、保持している実行コマンド設定情報から取得する
+
+        Args:
+            scenario(str): シナリオ名
+            item(str): コマンド概要項目
+
+        Returns:
+            CommandConfig: 指定されたコマンド概要項目に関連するコマンド採番
+        """
+        scenarioConf = self.__subConfigs.get(scenario)
+        itemConf = scenarioConf._ScenarioConfig__commandConfigs.get(item)
+        return itemConf._CommandConfig__no
+
+
+    def get_command(self, scenario: str, item: str) -> CommandConfig:
+        """コマンド情報取得
+
+        指定されたシナリオ名とコマンド概要項目に関連するコマンド情報を、保持している実行コマンド設定情報から取得する
+
+        Args:
+            scenario(str): シナリオ名
+            item(str): コマンド概要項目
+
+        Returns:
+            CommandConfig: 指定されたコマンド概要項目に関連するコマンド情報
+        """
+        scenarioConf = self.__subConfigs.get(scenario)
+        itemConf = scenarioConf._ScenarioConfig__commandConfigs.get(item)
+        return itemConf._CommandConfig__command
+
 
     # def get_ConnectConfig_by_nf_host(self, nf_host: str) -> ConnectConfig:
     #     """接続設定情報取得
@@ -180,71 +266,35 @@ class SubLoadConfig:
 if __name__ == '__main__':
     config_file_name = 'C:\\python\\MM_scenario_config.xlsx'
     config = SubLoadConfig(config_file_name)
-    # print(config.mainConfigs)
-    # print()
-    # print()
 
     # print(config.subConfigs)
     # print()
     # print()
-    # print(config.get_scenario('amf_dns_up'))
+    # print(config.get_scenario("amf_dns_show"))
+    # print(config.get_item("amf_dns_show", "1_CMD_SHOW"))
+    # print(config.get_command("amf_dns_show", "1_CMD_SHOW"))
+    # print(config.get_node("amf_dns_show", "1_CMD_SHOW"))
 
-    # print(config.listConfigs)
-    # print()
-    # print()
-
-    # # print(config.subConfigs[0]._ScenarioConfig__commandConfigs[0])
-    # print(config.listConfigs)
-    # print()
-    # print()
-
-    # print(config.mainConfigs)
-    # print(config.mainConfigs["timeout"]._MainConfig__value)
-    # print(type(config.mainConfigs["timeout"]._MainConfig__value))
-
-    # for key, val in config.mainConfigs.items():
-    #     # print(key, val)
-    #     print(key)
-    #     print(val._MainConfig__value)
-    #     print()
-    #     print()
-
-    for key, val in config.subConfigs.items():
-        # print(key, val)
-        print(key)
-        # print(val)
-        # print(val._ScenarioConfig__commandConfigs)
-        print()
-        # print()
-        for dp_key, dp_val  in val._ScenarioConfig__commandConfigs.items():
-            # print(dp_key, dp_val)
-            print(dp_key)
-            print(dp_val)
+    for config in config.subConfigs:
+        # print(config)
+        for i in config._ScenarioConfig__commandConfigs:
+            print(i)
             print()
             print()
 
-    # for key, val in config.listConfigs.items():
+    # for key, val in config.subConfigs.items():
     #     # print(key, val)
     #     print(key)
-    #     print(val)
+    #     # print(val)
     #     # print(val._ScenarioConfig__commandConfigs)
     #     print()
-    #     print()
-    #     # for dp_key, dp_val  in val.items():
-    #     #     print(dp_key, dp_val)
-
-    # for val in config.listConfigs:
-    #     print(val)
-    #     print()
-    #     print()
-
-    # for key, val in config.mainConfigs.items():
-    #     print(key,val)
-    #     print(key)
-    #     print(val._MainConfig__value)
-    #     print(type(val._MainConfig__value))
-    #     print()
-    #     print()
+    #     # print()
+    #     for dp_key, dp_val  in val._ScenarioConfig__commandConfigs.items():
+    #         # print(dp_key, dp_val)
+    #         print(dp_key)
+    #         print(dp_val)
+    #         print()
+    #         print()
 
     # print()
     # print()

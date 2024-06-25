@@ -34,7 +34,7 @@ class ScenarioConfig:
         return self.__scenario
 
     @property
-    def commandConfigs(self) -> Dict[str, CommandConfig]:
+    def commandConfigs(self) -> List[CommandConfig]:
         """実行コマンド設定情報プロパティ
 
         インスタンス属性の実行コマンド設定情報を取得する

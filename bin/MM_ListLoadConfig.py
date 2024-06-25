@@ -10,6 +10,7 @@ import openpyxl
 from typing import List, Dict, Any
 
 from MM_ListConfig import ListConfig
+from ListRow import ListRow
 
 
 class AsciiFilter:
@@ -46,7 +47,7 @@ class AsciiFilter:
         return org
 
 class ListLoadConfig:
-    """設定情報
+    """接続設定情報
 
     シナリオ設定情報ファイルを読み込み、ファイルに設定されたメイン処理設定情報、接続設定情報、サブ処理設定情報を保持する
 
@@ -99,8 +100,8 @@ class ListLoadConfig:
         Returns:
             Dict[str, ListConfig]: 接続設定情報
         """
-        # 接続設定情報辞書を初期化する
-        listConfigs: Dict[str, ListConfig] = {}
+        # 接続設定情報を初期化する
+        listConfigs: List[ListConfig] = []
         # 引渡されたリストシート名リストに格納されているリストシート名を順に呼び出す
         for list_sheet_name in list_sheet_list:
             # リストに格納されている順に取得したリスト名のシナリオ取得
@@ -110,14 +111,14 @@ class ListLoadConfig:
                 # 各列の1行目をキー、2行目以降を値として格納しているものを変数化
                 list_row_items = row.__dict__.items()
                 # 各行情報リストを初期化
-                list_row_list = []
+                list_row_vallist = []
                 for list_row_key, list_row_val in list_row_items:
                     # 各行の情報を格納
-                    list_row_list.append(list_row_val)
+                    list_row_vallist.append(list_row_val)
                 # LISTシートの行のコマンド実行ホスト名"HOST"がnullでない場合
                 if not pd.isnull(row.cNRF_AMF):
                     # LISTシートの行の情報から接続設定情報を生成し、接続設定情報リストに追加する
-                    listConfigs[row.cNRF_AMF] = ListConfig(*list_row_list)
+                    listConfigs.append(ListConfig(*list_row_vallist))
         return listConfigs
 
     # def get_scenario(self, scenario: str) -> ScenarioConfig:
@@ -166,6 +167,11 @@ class ListLoadConfig:
 if __name__ == '__main__':
     config_file_name = 'C:\\python\\MM_scenario_config.xlsx'
     config = ListLoadConfig(config_file_name)
+    # print(len(config.listConfigs))
+    cNRF_AMF_list = ListConfig.get__cNRF_AMF_list()
+    print(len(cNRF_AMF_list))
+    for i in cNRF_AMF_list:
+        print(i)
     # print(config.mainConfigs)
     # print()
     # print()
@@ -178,6 +184,9 @@ if __name__ == '__main__':
     # print(config.listConfigs)
     # print()
     # print()
+
+    # for i in config.listConfigs:
+    #     print(i)
 
     # # print(config.subConfigs[0]._ScenarioConfig__commandConfigs[0])
     # print(config.listConfigs)
@@ -209,15 +218,15 @@ if __name__ == '__main__':
     #         print()
     #         print()
 
-    for key, val in config.listConfigs.items():
-        # print(key, val)
-        print(key)
-        print(val)
-        # print(val._ScenarioConfig__commandConfigs)
-        print()
-        print()
-        # for dp_key, dp_val  in val.items():
-        #     print(dp_key, dp_val)
+    # for key, val in config.listConfigs.items():
+    #     # print(key, val)
+    #     print(key)
+    #     print(val)
+    #     # print(val._ScenarioConfig__commandConfigs)
+    #     print()
+    #     print()
+    #     # for dp_key, dp_val  in val.items():
+    #     #     print(dp_key, dp_val)
 
     # for val in config.listConfigs:
     #     print(val)

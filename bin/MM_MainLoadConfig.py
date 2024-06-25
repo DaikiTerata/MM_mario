@@ -75,7 +75,7 @@ class MainLoadConfig:
 
     @property
     def mainConfigs(self) -> Dict[str, MainConfig]:
-        """初期設定情報プロパティ
+        """メイン設定情報プロパティ
 
         インスタンス属性の初期設定情報を取得する
 
@@ -98,28 +98,44 @@ class MainLoadConfig:
         # シナリオ設定情報ファイルから「DEFAULT_OPTION」シートの情報を読み込む
         main_sheet = config_file.parse(main_sheet_name)
         # 接続設定情報リストを初期化する
-        mainConfigs: Dict[str, MainConfig] = {}
+        mainConfigs_list: List[MainConfig] = []
         # DEFAULT_OPTIONシートの行でループする
         for row in [AsciiFilter(row) for _, row in main_sheet.iterrows()]:
             # DEFAULT_OPTIONシートの行の初期設定項目名"KEY"がnullでない場合
             if not pd.isnull(row.KEY):
-                # DEFAULT_OPTIONシートの行の情報から初期設定情報辞書を生成し、初期設定項目名"KEY"をキーに初期設定情報辞書に追加する
-                mainConfigs[row.KEY] = MainConfig(row.KEY, row.VALUE)
+                # DEFAULT_OPTIONシートの行の情報から初期設定情報リストを生成し、初期設定項目名"KEY"をキーに初期設定情報リストに追加する
+                mainConfigs_list.append(MainConfig(row.KEY, row.VALUE))
 
-        return mainConfigs
+        return mainConfigs_list
 
-    # def get_scenario(self, scenario: str) -> ScenarioConfig:
-    #     """シナリオ設定情報取得
+    def get_key(self, main_key: str) -> MainConfig:
+        """初期値キー設定情報取得
 
-    #     指定されたシナリオ名に関連する設定情報を、保持しているシナリオ設定情報から取得する
+        指定された初期値キーに関連する設定情報を、保持している初期値設定情報から取得する
 
-    #     Args:
-    #         scenario(str): シナリオ名
+        Args:
+            main_key(str): 初期値のキー
 
-    #     Returns:
-    #         ScenarioConfig: 指定されたシナリオ名に関連するシナリオ設定情報
-    #     """
-    #     return self.__subConfigs.get(scenario)
+        Returns:
+            ScenarioConfig: 指定された初期値キーに関連する初期値設定情報
+        """
+        key = self.__mainConfigs.get(main_key)
+        return key._MainConfig__key
+
+
+    def get_value(self, main_key: str) -> MainConfig:
+        """初期値設定情報取得
+
+        指定された初期値に関連する設定情報を、保持している初期値設定情報から取得する
+
+        Args:
+            main_key(str): 初期値のキー
+
+        Returns:
+            ScenarioConfig: 指定された初期値に関連する初期値設定情報
+        """
+        key = self.__mainConfigs.get(main_key)
+        return key._MainConfig__value
 
     # def get_ConnectConfig_by_nf_host(self, nf_host: str) -> ConnectConfig:
     #     """接続設定情報取得
@@ -157,68 +173,19 @@ if __name__ == '__main__':
     # print(config.mainConfigs)
     # print()
     # print()
+    # print(config.get_key("mm_version"))
+    # print(config.get_value("mm_version"))
 
-    # print(config.subConfigs)
-    # print()
-    # print()
-    # print(config.get_scenario('amf_dns_up'))
-
-    # print(config.listConfigs)
-    # print()
-    # print()
-
-    # # print(config.subConfigs[0]._ScenarioConfig__commandConfigs[0])
-    # print(config.listConfigs)
-    # print()
-    # print()
-
-    # print(config.mainConfigs)
-    # print(config.mainConfigs["timeout"]._MainConfig__value)
-    # print(type(config.mainConfigs["timeout"]._MainConfig__value))
-
-    for key, val in config.mainConfigs.items():
-        # print(key, val)
-        print(key)
-        print(val._MainConfig__value)
-        print()
-        print()
-
-    # for key, val in config.subConfigs.items():
-    #     # print(key, val)
-    #     print(key)
-    #     # print(val)
-    #     # print(val._ScenarioConfig__commandConfigs)
-    #     print()
-    #     # print()
-    #     for dp_key, dp_val  in val._ScenarioConfig__commandConfigs.items():
-    #         # print(dp_key, dp_val)
-    #         print(dp_key)
-    #         print(dp_val)
-    #         print()
-    #         print()
-
-    # for key, val in config.listConfigs.items():
-    #     # print(key, val)
-    #     print(key)
-    #     print(val)
-    #     # print(val._ScenarioConfig__commandConfigs)
-    #     print()
-    #     print()
-    #     # for dp_key, dp_val  in val.items():
-    #     #     print(dp_key, dp_val)
-
-    # for val in config.listConfigs:
-    #     print(val)
-    #     print()
-    #     print()
+    for i in config.mainConfigs:
+        print(i)
 
     # for key, val in config.mainConfigs.items():
-    #     print(key,val)
+    #     # print(key, val)
     #     print(key)
     #     print(val._MainConfig__value)
-    #     print(type(val._MainConfig__value))
     #     print()
     #     print()
+
 
     # print()
     # print()

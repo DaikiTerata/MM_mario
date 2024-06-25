@@ -17,7 +17,7 @@ class CommandConfig:
 
         Args:
             node (str): 実行環境名 コマンド実行する環境
-            no(str): コマンド概要採番 実行するコマンド概要項目の採番
+            no(str): コマンド採番 実行するコマンド概要項目の採番
             task(str): コマンド概要要素 実行するコマンド概要項目の要素
             item (str): コマンド概要 実行するコマンドの概要項目
             when (str): 実行条件項目 コマンドを実行する条件の項目 
@@ -65,12 +65,12 @@ class CommandConfig:
 
     @property
     def task(self) -> str:
-        """xxxxプロパティ
+        """コマンド概要要素プロパティ
 
-        インスタンス属性のxxxxを取得する
+        インスタンス属性のコマンド概要要素を取得する
 
         Returns:
-            str: インスタンス属性のxxxx
+            str: インスタンス属性のコマンド概要要素
         """
         return self.__task
 
